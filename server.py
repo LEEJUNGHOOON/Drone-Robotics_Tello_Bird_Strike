@@ -15,6 +15,12 @@ CASCADE_BIRD = './haarcascade_frontalface.xml'
 def index():
     return "Hello World!"
 
+@app.route('/test', methods=['POST'])
+def test():
+    image_file = request.files.get('image')
+    img = np.array(Image.open(image_file))
+    print(img.shape)
+    return "Hello World!"
 
 def gen_message_by_objs(objs, frame):
     if not len(objs):
