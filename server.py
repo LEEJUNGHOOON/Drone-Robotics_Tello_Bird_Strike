@@ -16,8 +16,36 @@ def index():
     return "Hello World!"
 
 
-def judge_message_by_objs(objs):
-    return "Land"
+def gen_message_by_objs(objs, frame):
+    if not len(objs):
+        return None
+
+    H, W, _ = frame.shape
+    G = (H//2, W//2)
+
+    areas = [w*h for (_, _, w, h) in objs]
+    idx = np.argmin(areas)
+    centers = [(y+h//2, x+w//2) for (x, y, w, h) in objs]
+    target = centers[idx]
+
+    diffY = G[0] - target[0]
+    diffX = target[1] - G[1]
+
+    msg = ""
+    if diffX > 0:
+        msg += "right"
+    else:
+        msg += "left"
+    msg += ":" + str(abs(diffX))
+
+    msg += ","
+    if diffY > 0:
+        msg += "up"
+    else:
+        msg += "down"
+    msg += ":" + str(abs(diffY))
+
+    return msg
 
 
 def detect_bird(img):
@@ -41,7 +69,7 @@ def bird_inference():
     img = np.array(Image.open(image_file))
     birds = detect_bird(img)
 
-    msg = judge_message_by_objs(birds)
+    msg = gen_message_by_objs(birds, img)
 
     return msg
 
@@ -73,14 +101,9 @@ def face_inference():
 
     faces = detect_face(img)
 
-    # 検出結果の可視化
-    img_copy = img.copy()
-    for (x, y, w, h) in faces:
-        img_copy = cv2.rectangle(img_copy, (x, y), (x+w, y+h), (255, 0, 0), 2)
+    msg = gen_message_by_objs(faces, img)
 
-    cv2.imwrite("tmp.png", img_copy)
-
-    return "face detected successfully"
+    return msg
 
 
 if __name__ == '__main__':
