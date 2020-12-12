@@ -7,7 +7,8 @@ from PIL import Image
 app = Flask(__name__)
 
 # カスケードファイルのパス
-CASCADE_PATH = './haarcascade_frontalface.xml'
+CASCADE_FACE = './haarcascade_frontalface.xml'
+CASCADE_BIRD = './haarcascade_frontalface.xml'
 
 
 @app.route('/')
@@ -15,12 +16,42 @@ def index():
     return "Hello World!"
 
 
+def judge_message_by_objs(objs):
+    return "Land"
+
+
+def detect_bird(img):
+    # 画像をグレースケール変換
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # カスケード分類器の読み込み
+    cascade = cv2.CascadeClassifier(CASCADE_BIRD)
+
+    # 鳥検出の実行: 人数分のBBの配列を出力
+    birds = cascade.detectMultiScale(gray)
+
+    return birds
+
+
+@app.route('/bird_detection', methods=['POST'])
+def bird_inference():
+    image_file = request.files.get('image')
+
+    # 画像の読み込み
+    img = np.array(Image.open(image_file))
+    birds = detect_bird(img)
+
+    msg = judge_message_by_objs(birds)
+
+    return msg
+
+
 def detect_face(img):
     # 画像をグレースケール変換
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # カスケード分類器の読み込み
-    cascade = cv2.CascadeClassifier(CASCADE_PATH)
+    cascade = cv2.CascadeClassifier(CASCADE_FACE)
 
     # 顔検出の実行: 人数分のBBの配列を出力
     faces = cascade.detectMultiScale(gray)
@@ -29,7 +60,7 @@ def detect_face(img):
 
 
 @app.route('/face_detection', methods=['POST'])
-def inference():
+def face_inference():
     image_file = request.files.get('image')
 
     # 画像の読み込み
