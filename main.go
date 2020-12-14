@@ -16,7 +16,7 @@ import (
 	"gobot.io/x/gobot/platforms/dji/tello"
 )
 
-const serverURI = "0.0.0.0:5000"
+const serverURI = "http://0.0.0.0:5000"
 
 func main() {
 	drone := tello.NewDriver("8888")
@@ -47,7 +47,7 @@ func main() {
 			})
 		})
 
-		gobot.Every(time.Second, func() {
+		gobot.Every(2*time.Second, func() {
 			files, err := ioutil.ReadDir(dir)
 			if err != nil {
 				log.Fatal(err)
@@ -62,7 +62,7 @@ func main() {
 			// 	log.Fatal(err)
 			// }
 			// image.Draw()
-			go getMessageByUploadingImage(filePath)
+			getMessageByUploadingImage(filePath)
 			for _, file := range files {
 				os.Remove(path.Join(dir, file.Name()))
 			}
