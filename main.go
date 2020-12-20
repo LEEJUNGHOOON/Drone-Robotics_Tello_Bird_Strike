@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"sort"
 	"strings"
 	"time"
 
@@ -17,7 +18,10 @@ import (
 	"gobot.io/x/gobot/platforms/dji/tello"
 )
 
+const speed = 40
 const serverURI = "http://0.0.0.0:5000/face_detection"
+
+var detected = false
 
 func main() {
 	drone := tello.NewDriver("8888")
@@ -48,10 +52,7 @@ func main() {
 			//})
 		})
 
-		speed := 40
-		detected := false
-
-		gobot.Every(3*time.Second, func() {
+		gobot.Every(time.Second*4, func() {
 			files, err := ioutil.ReadDir(dir)
 			if err != nil {
 				log.Fatal(err)
@@ -59,6 +60,9 @@ func main() {
 			if len(files) == 0 {
 				return
 			}
+			sort.Slice(files, func(i, j int) bool {
+				return files[i].ModTime().After(files[j].ModTime())
+			})
 			log.Println(files)
 			log.Println(files[0])
 			log.Println(files[0].Name())
@@ -76,43 +80,7 @@ func main() {
 
 			log.Println(message)
 
-			if detected {
-				drone.Forward(40)
-				log.Println("-skip and move forward")
-				detected = false
-			} else {
-				if strings.Contains(message, "right") {
-					drone.Right(speed)
-					log.Println("-move right")
-				} else if strings.Contains(message, "left") {
-					drone.Left(speed)
-					log.Println("-move left")
-				} else if strings.Contains(message, "up") {
-					drone.Up(speed)
-					log.Println("-move up")
-				} else if strings.Contains(message, "down") {
-					drone.Down(speed)
-					log.Println("-move down")
-				} else if strings.Contains(message, "forward") {
-					drone.Forward(speed)
-					log.Println("-move forward")
-				} else if strings.Contains(message, "back") {
-					drone.Backward(speed)
-					log.Println("-move back")
-				} else {
-					drone.Clockwise(45)
-					log.Println("-rotate")
-				}
-			}
-
-			time.Sleep(time.Second) // wait for 1 second
-
-			if !strings.Contains(message, "Not") {
-				detected = true // Forward at next step
-			}
-
-			drone.Hover()
-
+			move(message, drone)
 		})
 
 		drone.On(tello.VideoFrameEvent, func(data interface{}) {
@@ -130,6 +98,45 @@ func main() {
 	)
 
 	robot.Start()
+}
+
+func move(message string, drone *tello.Driver) {
+	if detected {
+		drone.Forward(40)
+		log.Println("-skip and move forward")
+		detected = false
+	} else {
+		if strings.Contains(message, "right") {
+			drone.Right(speed)
+			log.Println("-move right")
+		} else if strings.Contains(message, "left") {
+			drone.Left(speed)
+			log.Println("-move left")
+		} else if strings.Contains(message, "up") {
+			drone.Up(speed)
+			log.Println("-move up")
+		} else if strings.Contains(message, "down") {
+			drone.Down(speed)
+			log.Println("-move down")
+		} else if strings.Contains(message, "forward") {
+			drone.Forward(speed)
+			log.Println("-move forward")
+		} else if strings.Contains(message, "back") {
+			drone.Backward(speed)
+			log.Println("-move back")
+		} else {
+			drone.Clockwise(45)
+			log.Println("-rotate")
+		}
+	}
+
+	time.Sleep(time.Second) // wait for 1 second
+
+	if !strings.Contains(message, "Not") {
+		detected = true // Forward at next step
+	}
+
+	drone.Hover()
 }
 
 func getMessageByUploadingImage(imagePath string) string {
@@ -175,9 +182,4 @@ func handleError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func move(message string) {
-	//drone := tello.NewDriver("8888")
-	//drone.TakeOff()
 }
