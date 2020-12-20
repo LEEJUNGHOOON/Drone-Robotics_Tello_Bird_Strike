@@ -10,13 +10,14 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"time"
 
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/dji/tello"
 )
 
-const serverURI = "http://0.0.0.0:5000"
+const serverURI = "http://0.0.0.0:5000/face_detection"
 
 func main() {
 	drone := tello.NewDriver("8888")
@@ -40,14 +41,16 @@ func main() {
 				drone.StartVideo()
 			})
 			drone.TakeOff()
-			gobot.After(time.Second*15, func() {
-				drone.Clockwise(50)
-				drone.Forward(21)
-				drone.Land()
-			})
+			//gobot.After(time.Second*15, func() {
+			//	drone.Clockwise(50)
+			//	drone.Forward(21)
+			//	drone.Land()
+			//})
 		})
 
-		gobot.Every(2*time.Second, func() {
+		speed := 40
+
+		gobot.Every(3*time.Second, func() {
 			files, err := ioutil.ReadDir(dir)
 			if err != nil {
 				log.Fatal(err)
@@ -62,10 +65,35 @@ func main() {
 			// 	log.Fatal(err)
 			// }
 			// image.Draw()
-			getMessageByUploadingImage(filePath)
+			message := getMessageByUploadingImage(filePath)
 			for _, file := range files {
 				os.Remove(path.Join(dir, file.Name()))
 			}
+
+			log.Println(message)
+
+			if strings.Contains(message, "right") {
+				drone.Right(speed)
+				log.Println("-move")
+				time.Sleep(time.Second) // wait for 1 second
+			}
+			if strings.Contains(message, "left") {
+				drone.Left(speed)
+				log.Println("-move")
+				time.Sleep(time.Second)
+			}
+			if strings.Contains(message, "forward") {
+				drone.Forward(speed)
+				log.Println("-move")
+				time.Sleep(time.Second)
+			}
+			if strings.Contains(message, "back") {
+				drone.Backward(speed)
+				log.Println("-move")
+				time.Sleep(time.Second)
+			}
+			drone.Hover()
+
 		})
 
 		drone.On(tello.VideoFrameEvent, func(data interface{}) {
@@ -85,8 +113,8 @@ func main() {
 	robot.Start()
 }
 
-func getMessageByUploadingImage(imagePath string) {
-	fieldname := "file"
+func getMessageByUploadingImage(imagePath string) string {
+	fieldname := "image"
 	file, err := os.Open(imagePath)
 	handleError(err)
 
@@ -120,10 +148,8 @@ func getMessageByUploadingImage(imagePath string) {
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(resp.Body)
-	move(buf.String())
 
-	err = resp.Body.Close()
-	handleError(err)
+	return buf.String()
 }
 
 func handleError(err error) {
@@ -133,5 +159,6 @@ func handleError(err error) {
 }
 
 func move(message string) {
-	// TODO
+	//drone := tello.NewDriver("8888")
+	//drone.TakeOff()
 }

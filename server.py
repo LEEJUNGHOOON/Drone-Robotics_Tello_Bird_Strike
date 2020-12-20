@@ -109,7 +109,8 @@ def face_inference():
     faces = detect_face(img)
 
     msg = gen_message_by_objs(faces, img)
-
+    if msg is None:
+        msg = "Not found"
     return msg
 
 
