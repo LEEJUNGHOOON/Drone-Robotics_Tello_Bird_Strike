@@ -50,7 +50,7 @@ func main() {
 
 		speed := 40
 
-		gobot.Every(3*time.Second, func() {
+		gobot.Every(4*time.Second, func() {
 			files, err := ioutil.ReadDir(dir)
 			if err != nil {
 				log.Fatal(err)
@@ -58,6 +58,9 @@ func main() {
 			if len(files) == 0 {
 				return
 			}
+			log.Println(files)
+			log.Println(files[0])
+			log.Println(files[0].Name())
 			filePath := path.Join(dir, files[0].Name())
 			log.Println(filePath)
 			// image, err := ansimage.NewFromFile(filePath, color.Black, ansimage.NoDithering)
@@ -74,24 +77,40 @@ func main() {
 
 			if strings.Contains(message, "right") {
 				drone.Right(speed)
-				log.Println("-move")
+				log.Println("-move right")
 				time.Sleep(time.Second) // wait for 1 second
-			}
-			if strings.Contains(message, "left") {
+			} else if strings.Contains(message, "left") {
 				drone.Left(speed)
-				log.Println("-move")
+				log.Println("-move left")
 				time.Sleep(time.Second)
-			}
-			if strings.Contains(message, "forward") {
+			} else if strings.Contains(message, "up") {
+				drone.Up(speed)
+				log.Println("-move up")
+				time.Sleep(time.Second)
+			} else if strings.Contains(message, "down") {
+				drone.Down(speed)
+				log.Println("-move down")
+				time.Sleep(time.Second)
+			} else if strings.Contains(message, "forward") {
 				drone.Forward(speed)
-				log.Println("-move")
+				log.Println("-move forward")
 				time.Sleep(time.Second)
-			}
-			if strings.Contains(message, "back") {
+			} else if strings.Contains(message, "back") {
 				drone.Backward(speed)
-				log.Println("-move")
+				log.Println("-move back")
+				time.Sleep(time.Second)
+			} else {
+				drone.Clockwise(45)
+				log.Println("-rotate")
 				time.Sleep(time.Second)
 			}
+
+			if !strings.Contains(message, "Not") {
+				drone.Forward(30)
+				log.Println("-move forward")
+			}
+			time.Sleep(time.Second)
+
 			drone.Hover()
 
 		})
