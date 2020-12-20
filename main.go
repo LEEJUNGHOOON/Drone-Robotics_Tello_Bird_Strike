@@ -49,8 +49,9 @@ func main() {
 		})
 
 		speed := 40
+		detected := false
 
-		gobot.Every(4*time.Second, func() {
+		gobot.Every(3*time.Second, func() {
 			files, err := ioutil.ReadDir(dir)
 			if err != nil {
 				log.Fatal(err)
@@ -75,41 +76,40 @@ func main() {
 
 			log.Println(message)
 
-			if strings.Contains(message, "right") {
-				drone.Right(speed)
-				log.Println("-move right")
-				time.Sleep(time.Second) // wait for 1 second
-			} else if strings.Contains(message, "left") {
-				drone.Left(speed)
-				log.Println("-move left")
-				time.Sleep(time.Second)
-			} else if strings.Contains(message, "up") {
-				drone.Up(speed)
-				log.Println("-move up")
-				time.Sleep(time.Second)
-			} else if strings.Contains(message, "down") {
-				drone.Down(speed)
-				log.Println("-move down")
-				time.Sleep(time.Second)
-			} else if strings.Contains(message, "forward") {
-				drone.Forward(speed)
-				log.Println("-move forward")
-				time.Sleep(time.Second)
-			} else if strings.Contains(message, "back") {
-				drone.Backward(speed)
-				log.Println("-move back")
-				time.Sleep(time.Second)
+			if detected {
+				drone.Forward(40)
+				log.Println("-skip and move forward")
+				detected = false
 			} else {
-				drone.Clockwise(45)
-				log.Println("-rotate")
-				time.Sleep(time.Second)
+				if strings.Contains(message, "right") {
+					drone.Right(speed)
+					log.Println("-move right")
+				} else if strings.Contains(message, "left") {
+					drone.Left(speed)
+					log.Println("-move left")
+				} else if strings.Contains(message, "up") {
+					drone.Up(speed)
+					log.Println("-move up")
+				} else if strings.Contains(message, "down") {
+					drone.Down(speed)
+					log.Println("-move down")
+				} else if strings.Contains(message, "forward") {
+					drone.Forward(speed)
+					log.Println("-move forward")
+				} else if strings.Contains(message, "back") {
+					drone.Backward(speed)
+					log.Println("-move back")
+				} else {
+					drone.Clockwise(45)
+					log.Println("-rotate")
+				}
 			}
 
+			time.Sleep(time.Second) // wait for 1 second
+
 			if !strings.Contains(message, "Not") {
-				drone.Forward(30)
-				log.Println("-move forward")
+				detected = true // Forward at next step
 			}
-			time.Sleep(time.Second)
 
 			drone.Hover()
 
