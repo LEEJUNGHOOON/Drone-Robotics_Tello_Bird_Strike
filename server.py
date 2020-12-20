@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # カスケードファイルのパス
 CASCADE_FACE = './haarcascade_frontalface.xml'
-CASCADE_BIRD = './haarcascade_frontalface.xml'
+CASCADE_BIRD = './cascade_bird.xml'
 
 
 @app.route('/')
@@ -76,7 +76,8 @@ def bird_inference():
     birds = detect_bird(img)
 
     msg = gen_message_by_objs(birds, img)
-
+    if msg is None:
+        msg = "Not found"
     return msg
 
 
