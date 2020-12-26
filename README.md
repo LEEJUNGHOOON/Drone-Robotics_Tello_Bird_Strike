@@ -1,3 +1,5 @@
 # tello-bird-detection
 
-![sequence](./drone-bird-detection-sequence.png)
+<p align="center">
+  <img src="./drone-bird-detection-sequence2.png">
+</p>
