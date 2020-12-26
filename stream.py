@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 from timeit import default_timer as timer
-from server import detect_bird
+from server_yolo import detect_bird
 
 def main():
     cap = cv2.VideoCapture(1)

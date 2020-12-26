@@ -18,8 +18,8 @@ import (
 	"gobot.io/x/gobot/platforms/dji/tello"
 )
 
-const speed = 40
-const serverURI = "http://0.0.0.0:5000/face_detection"
+const speed = 30
+const serverURI = "http://0.0.0.0:5000/bird_detection"
 
 var detected = false
 
@@ -101,6 +101,7 @@ func main() {
 }
 
 func move(message string, drone *tello.Driver) {
+
 	if detected {
 		drone.Forward(40)
 		log.Println("-skip and move forward")
@@ -109,31 +110,39 @@ func move(message string, drone *tello.Driver) {
 		if strings.Contains(message, "right") {
 			drone.Right(speed)
 			log.Println("-move right")
+			detected = true
 		} else if strings.Contains(message, "left") {
 			drone.Left(speed)
 			log.Println("-move left")
+			detected = true
 		} else if strings.Contains(message, "up") {
 			drone.Up(speed)
 			log.Println("-move up")
+			detected = true
 		} else if strings.Contains(message, "down") {
 			drone.Down(speed)
 			log.Println("-move down")
+			detected = true
 		} else if strings.Contains(message, "forward") {
 			drone.Forward(speed)
 			log.Println("-move forward")
+			detected = true
 		} else if strings.Contains(message, "back") {
 			drone.Backward(speed)
 			log.Println("-move back")
+			detected = true
 		} else {
 			drone.Clockwise(45)
 			log.Println("-rotate")
 		}
+
 	}
+	print("detected: ", detected, "\n")
 
 	time.Sleep(time.Second) // wait for 1 second
 
 	if !strings.Contains(message, "Not") {
-		detected = true // Forward at next step
+		// detected = true // Forward at next step
 	}
 
 	drone.Hover()
