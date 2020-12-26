@@ -7,8 +7,8 @@ from torch.autograd import Variable
 import numpy as np
 import cv2 
 import matplotlib.pyplot as plt
-from yolonet.util import count_parameters as count
-from yolonet.util import convert2cpu as cpu
+from yolo.util import count_parameters as count
+from yolo.util import convert2cpu as cpu
 from PIL import Image, ImageDraw
 
 

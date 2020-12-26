@@ -3,7 +3,7 @@ import numpy as np
 
 from flask import Flask, request, render_template  # , current_app
 from PIL import Image
-from yolonet.yolonet import Yolonet
+from yolo.yolo import Yolo
 
 app = Flask(__name__)
 
@@ -56,8 +56,8 @@ def gen_message_by_objs(objs, frame):
 
 
 def detect_bird(img):
-    yolonet = Yolonet()
-    bbox = yolonet.detect_bbox(img, imshow=False)
+    yolo = Yolo()
+    bbox = yolo.detect_bbox(img, imshow=False)
     birds = []
     for b in bbox:
         print(b)

@@ -5,15 +5,15 @@ import torch.nn as nn
 from torch.autograd import Variable
 import numpy as np
 import cv2 
-from yolonet.util import *
-from yolonet.darknet import Darknet
-from yolonet.preprocess import prep_image, inp_to_image
+from yolo.util import *
+from yolo.darknet import Darknet
+from yolo.preprocess import prep_image, inp_to_image
 import pandas as pd
 import random 
 import argparse
 import pickle as pkl
 
-class Yolonet:
+class Yolo:
 
     def __init__(self):
         # set args
@@ -23,10 +23,10 @@ class Yolonet:
 
 
         # load file
-        self.cfgfile = "yolonet/cfg/yolov3.cfg"
-        self.weightsfile = "yolonet/yolov3.weights"
-        self.classes = load_classes('yolonet/data/coco.names')
-        self.colors = pkl.load(open("yolonet/pallete", "rb"))
+        self.cfgfile = "yolo/cfg/yolov3.cfg"
+        self.weightsfile = "yolo/yolov3.weights"
+        self.classes = load_classes('yolo/data/coco.names')
+        self.colors = pkl.load(open("yolo/pallete", "rb"))
 
         # set model
         self.num_classes = 80
