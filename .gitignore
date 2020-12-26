@@ -1,1 +1,3 @@
 python-tello-bird-detection
+__pycache__
+yolonet/yolov3.weights
