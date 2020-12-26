@@ -4,7 +4,7 @@
   <img src="./drone-bird-detection-sequence2.png">
 </p>
 
-## dowload weight
+## download weight
 ```
 $ wget -P yolo https://pjreddie.com/media/files/yolov3.weights
 ```
