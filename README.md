@@ -6,8 +6,7 @@
 
 ## dowload weight
 ```
-$ cd yolo  
-$ wget https://pjreddie.com/media/files/yolov3.weights
+$ wget -P yolo https://pjreddie.com/media/files/yolov3.weights
 ```
 
 ## yolo テスト
