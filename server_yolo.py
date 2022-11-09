@@ -70,7 +70,7 @@ def detect_bird(img):
     return birds
 
 
-@app.route('/bird_detection', methods=['POST'])
+@app.route('/bird_detection', methods=['GET','POST'])
 def bird_inference():
     image_file = request.files.get('image')
 

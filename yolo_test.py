@@ -2,7 +2,7 @@ from yolo.yolo import Yolo
 import cv2
 
 if __name__ == "__main__":
-    img = cv2.imread("yolo/imgs/messi.jpg")
+    img = cv2.imread("yolo/imgs/eagle.jpg")
     yolo = Yolo()
     bbox = yolo.detect_bbox(img, imshow=True) # label, x, y, width, height
 

@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"os/exec"
 	"path"
 	"sort"
 	"strings"
@@ -30,12 +29,13 @@ func main() {
 		log.Fatal(err)
 	}
 	defer os.RemoveAll(dir) // clean up
-	ffmpeg := exec.Command("ffmpeg", "-i", "-", "-r", "1", path.Join(dir, "output_%04d.png"))
-	ffmpegIn, _ := ffmpeg.StdinPipe()
-	if err := ffmpeg.Start(); err != nil {
-		log.Println(err)
-		return
-	}
+
+	// ffmpeg := *exec.Command("ffmpeg", "-i", "-", "-r", "1", path.Join(dir, "output_%04d.png"))
+	// ffmpegIn, _ := ffmpeg.StdinPipe()
+	// if err := ffmpeg.Start(); err != nil {
+	// 	log.Println(err)
+	// 	return
+	// }
 
 	work := func() {
 		drone.On(tello.ConnectedEvent, func(data interface{}) {
@@ -83,12 +83,12 @@ func main() {
 			move(message, drone)
 		})
 
-		drone.On(tello.VideoFrameEvent, func(data interface{}) {
-			pkt := data.([]byte)
-			if _, err := ffmpegIn.Write(pkt); err != nil {
-				log.Println(err)
-			}
-		})
+		// drone.On(tello.VideoFrameEvent, func(data interface{}) {
+		// 	pkt := data.([]byte)
+		// 	if _, err := ffmpegIn.Write(pkt); err != nil {
+		// 		log.Println(err)
+		// 	}
+		// })
 	}
 
 	robot := gobot.NewRobot("tello",
