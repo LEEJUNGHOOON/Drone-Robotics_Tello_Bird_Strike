@@ -23,6 +23,16 @@ def test():
     print(img.shape)
     return "Hello World!"
 
+def detection_bird(img):
+    bird = detect_bird()
+    scale = 0
+    rotate = 0
+    if(bird):
+        scale = scale_bird()
+        rotate = rotate_bird()
+
+    return bird , scale, rotate
+
 def gen_message_by_objs(objs, frame):
     if not len(objs):
         return None
@@ -69,6 +79,33 @@ def detect_bird(img):
     
     return birds
 
+def rotate_bird(img):
+    yolo = Yolo()
+    bbox = yolo.detect_bbox(img, imshow=False)
+    birds = []
+    for b in bbox:
+        print(b)
+        if b[0] =="bird":
+            birds.append(b[1:5])
+    
+    if len(bbox) == 0:
+        print("no detection")
+    
+    return birds
+
+def scale_bird(img):
+    yolo = Yolo()
+    bbox = yolo.detect_bbox(img, imshow=False)
+    birds = []
+    for b in bbox:
+        print(b)
+        if b[0] =="bird":
+            birds.append(b[1:5])
+    
+    if len(bbox) == 0:
+        print("no detection")
+    
+    return birds
 
 @app.route('/bird_detection', methods=['GET','POST'])
 def bird_inference():
